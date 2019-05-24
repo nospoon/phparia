@@ -1,5 +1,5 @@
 {
-  "name": "wormling/phparia",
+  "name": "nospoon/phparia",
   "type": "library",
   "minimum-stability": "dev",
   "description": "Asterisk REST Interface (ARI) client for PHP.",
@@ -23,11 +23,16 @@
       "email": "wormling@gmail.com",
       "homepage": "http://wormling.github.com/",
       "role": "Developer"
+    },
+    {
+      "name": "Mikolaj Ilczyna",
+      "email": "mikolaj.ilczyna@gmail.com",
+      "role": "Developer"
     }
   ],
   "autoload": {
     "psr-0": {
-      "phparia": "src/wormling"
+      "phparia": "src"
     }
   },
   "repositories": [
@@ -38,7 +43,7 @@
   ],
   "extra": {
     "incenteev-parameters": {
-      "file": "src/wormling/phparia/config.yml",
+      "file": "src/config.yml",
       "parameter-key": "examples"
     }
   },

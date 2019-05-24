@@ -4,6 +4,6 @@
 /composer.lock
 /composer.phar
 /nbproject
-/src/wormling/phparia/config.yml
+/src/config.yml
 /build/
 /coverage/
