@@ -47,7 +47,7 @@
     "php": ">=5.4",
     "evenement/evenement": "^3.0 || ^2.0",
     "educoder/pest": "1.0.0",
-    "clue/ami-react": "^0.3.0",
+    "clue/ami-react": "^0.4.0",
     "incenteev/composer-parameter-handler": ">=2.0",
     "guzzlehttp/guzzle": "^6.2",
     "ratchet/pawl": "dev-master"
