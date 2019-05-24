@@ -39,7 +39,7 @@ abstract class PhpariaTestCase extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $configFile = __DIR__.'/../../config.yml';
+        $configFile = __DIR__ . '/../../config.yml';
         $value = Yaml::parse(file_get_contents($configFile));
 
         $this->ariAddress = $value['tests']['ari_address'];

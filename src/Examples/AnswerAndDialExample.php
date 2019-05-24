@@ -28,7 +28,7 @@ use Symfony\Component\Yaml\Yaml;
 use Zend\Log;
 
 // Make sure composer dependencies have been installed
-require __DIR__.'/../../../../vendor/autoload.php';
+require __DIR__ . '/../../../../vendor/autoload.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('xdebug.var_display_max_depth', 4);
@@ -57,7 +57,7 @@ class AnswerAndDialExample
 
     public function __construct()
     {
-        $configFile = __DIR__.'/../config.yml';
+        $configFile = __DIR__ . '/../config.yml';
         $value = Yaml::parse(file_get_contents($configFile));
 
         $ariAddress = $value['examples']['client']['ari_address'];

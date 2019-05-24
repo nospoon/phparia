@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2017 Brian Smith <wormling@gmail.com>.
+ * Copyright 2014 Brian Smith <wormling@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,14 @@
 
 namespace phparia\Examples;
 
-use Clue\React\Ami\Protocol\Event;
-use Devristo\Phpws\Messaging\WebSocketMessage;
 use phparia\Client\Phparia;
-use phparia\Events\Message;
+use phparia\Events\ChannelDtmfReceived;
+use phparia\Events\StasisStart;
 use Symfony\Component\Yaml\Yaml;
 use Zend\Log;
 
 // Make sure composer dependencies have been installed
-require __DIR__.'/../../../../vendor/autoload.php';
+require __DIR__ . '/../../../../vendor/autoload.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('xdebug.var_display_max_depth', 4);
@@ -34,10 +33,10 @@ ini_set('xdebug.var_display_max_depth', 4);
 /**
  * @author Brian Smith <wormling@gmail.com>
  */
-class EventsExample
+class InputExample
 {
     /**
-     * Example of creating a stasis app which also supports AMI events.
+     * Example of listening for DTMF input from a caller.
      *
      * @var Phparia
      */
@@ -45,33 +44,34 @@ class EventsExample
 
     public function __construct()
     {
-        $configFile = __DIR__.'/../config.yml';
+        $configFile = __DIR__ . '/../config.yml';
         $value = Yaml::parse(file_get_contents($configFile));
 
         $ariAddress = $value['examples']['client']['ari_address'];
-        $amiAddress = $value['examples']['client']['ami_address'];
 
         $logger = new Log\Logger();
         $logWriter = new Log\Writer\Stream("php://output");
         $logger->addWriter($logWriter);
-        //$filter = new Log\Filter\SuppressFilter(true);
+        //$filter = new \Zend\Log\Filter\SuppressFilter(true);
         $filter = new Log\Filter\Priority(Log\Logger::NOTICE);
         $logWriter->addFilter($filter);
 
         // Connect to the ARI server
         $client = new Phparia($logger);
-        $client->connect($ariAddress, $amiAddress);
+        $client->connect($ariAddress);
         $this->client = $client;
 
-        // ARI Events
-        $client->getAriClient()->getWsClient()->on("message", function(WebSocketMessage $rawMessage) {
-            $message = new Message($rawMessage->getData());
-            $this->log($message->getType());
-        });
+        // Listen for the stasis start
+        $client->onStasisStart(function (StasisStart $event) {
+            // Put the new channel in a bridge
+            $channel = $event->getChannel();
+            $bridge = $this->client->bridges()->createBridge(uniqid(), 'dtmf_events, mixing', 'bridgename');
+            $this->client->bridges()->addChannel($bridge->getId(), $channel->getId(), null);
 
-        // AMI Eveents
-        $client->getAmiClient()->getClient()->on('event', function (Event $event) {
-            $this->log($event->getName());
+            // Listen for DTMF
+            $channel->onChannelDtmfReceived(function (ChannelDtmfReceived $event) {
+                $this->log("Got digit: {$event->getDigit()}");
+            });
         });
 
         $this->client->run();
@@ -88,4 +88,4 @@ class EventsExample
 
 }
 
-new EventsExample();
+new InputExample();
