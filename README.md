@@ -1,11 +1,7 @@
 phparia - PHP ARI API
 ===
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/wormling/phparia.svg)](https://packagist.org/packages/wormling/phparia) [![Build Status](http://img.shields.io/travis/wormling/phparia.svg?branch=master)](https://travis-ci.org/wormling/phparia) [![Code Coverage](https://scrutinizer-ci.com/g/wormling/phparia/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/wormling/phparia/?branch=master) [![Scrutinizer Quality Score](http://img.shields.io/scrutinizer/g/wormling/phparia.svg)](https://scrutinizer-ci.com/g/wormling/phparia/)
-[![License](https://img.shields.io/github/license/wormling/phparia.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-
-**Functional tests will fail until the new server is ready**
-
+Forked from wormling/phparia.
 Framework for creating ARI (Asterisk REST Interface) applications.  (https://wiki.asterisk.org/wiki/display/AST/Getting+Started+with+ARI)
 
 Features
@@ -20,10 +16,10 @@ Features
 
 Available via Composer
 ---
-Just add the package "wormling/phparia":
+Just add the package "nospoon/phparia":
 
 ```bash
-composer require wormling/phparia
+composer require nospoon/phparia
 ```
 
 Creating a stasis application
