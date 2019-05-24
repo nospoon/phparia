@@ -18,8 +18,6 @@
 
 namespace phparia\Client;
 
-use Devristo\Phpws\Client\WebSocket;
-use Devristo\Phpws\Messaging\WebSocketMessage;
 use GuzzleHttp\Client;
 use phparia\Api\Applications;
 use phparia\Api\Asterisk;
@@ -34,6 +32,8 @@ use phparia\Api\Recordings;
 use phparia\Api\Sounds;
 use phparia\Events\IdentifiableEventInterface;
 use phparia\Events\Message;
+use Ratchet\Client\WebSocket;
+use Ratchet\RFC6455\Messaging\Message as WebSocketMessage;
 use React\EventLoop\LoopInterface;
 use Zend\Log\LoggerInterface;
 
@@ -44,9 +44,9 @@ class AriClient
 {
 
     /**
-     * @var WebSocket
+     * @var \Ratchet\Client\WebSocket
      */
-    protected $wsClient;
+    protected $webSocket;
 
     /**
      * @var LoopInterface
@@ -157,34 +157,39 @@ class AriClient
             'verify' => false
         ];
         $config = array_merge($config, $httpOptions);
+
+        $reactConnector = new \React\Socket\Connector($this->eventLoop, $streamOptions);
+        $connector = new \Ratchet\Client\Connector($this->eventLoop, $reactConnector);
         
         $this->endpoint = new Client($config);
 
-        $this->wsClient = new WebSocket($address, $this->eventLoop, $this->logger, $streamOptions);
+        $connector($address)->then(function (\Ratchet\Client\WebSocket $webSocket) {
+            $this->webSocket = $webSocket;
 
-        $this->wsClient->on("message", function (WebSocketMessage $rawMessage) {
-            $message = new Message($rawMessage->getData());
+            $webSocket->on('message', function (WebSocketMessage $rawMessage) {
+                $message = new Message($rawMessage->getContents());
 
-            $eventType = '\\phparia\\Events\\'.$message->getType();
-            if (class_exists($eventType)) {
-                $event = new $eventType($this, $rawMessage->getData());
-            } else {
-                $this->logger->warn("Event: '$eventType' not implemented");
+                $eventType = '\\phparia\\Events\\'.$message->getType();
+                if (class_exists($eventType)) {
+                    $event = new $eventType($this, $rawMessage->getContents());
+                } else {
+                    $this->logger->warn("Event: '$eventType' not implemented");
 
-                // @todo Create a generic event for any that are not implemented
+                    // @todo Create a generic event for any that are not implemented
 
-                return;
-            }
+                    return;
+                }
 
-            // Emit the specific event (just to get it back to where it came from)
-            if ($event instanceof IdentifiableEventInterface) {
-                $this->logger->notice("Emitting ID event: {$event->getEventId()}");
-                $this->wsClient->emit($event->getEventId(), array('event' => $event));
-            }
+                // Emit the specific event (just to get it back to where it came from)
+                if ($event instanceof IdentifiableEventInterface) {
+                    $this->logger->notice("Emitting ID event: {$event->getEventId()}");
+                    $this->webSocket->emit($event->getEventId(), array('event' => $event));
+                }
 
-            // Emit the general event
-            $this->logger->notice("Emitting event: {$message->getType()}");
-            $this->wsClient->emit($message->getType(), array('event' => $event));
+                // Emit the general event
+                $this->logger->notice("Emitting event: {$message->getType()}");
+                $this->webSocket->emit($message->getType(), array('event' => $event));
+            });
         });
     }
 
@@ -195,7 +200,7 @@ class AriClient
      */
     public function onRequest(callable $callback)
     {
-        $this->wsClient->on("request", $callback);
+        $this->webSocket->on("request", $callback);
     }
 
     /**
@@ -205,7 +210,7 @@ class AriClient
      */
     public function onHandshake(callable $callback)
     {
-        $this->wsClient->on("handshake", $callback);
+        $this->webSocket->on("handshake", $callback);
     }
 
     /**
@@ -213,7 +218,7 @@ class AriClient
      */
     public function onConnect(callable $callback)
     {
-        $this->wsClient->on("connect", $callback);
+        $this->webSocket->on("connect", $callback);
     }
 
     /**
@@ -221,15 +226,15 @@ class AriClient
      */
     public function onClose(callable $callback)
     {
-        $this->wsClient->on("close", $callback);
+        $this->webSocket->on("close", $callback);
     }
 
     /**
      * @return WebSocket
      */
-    public function getWsClient()
+    public function getWebSocket()
     {
-        return $this->wsClient;
+        return $this->webSocket;
     }
 
     /**

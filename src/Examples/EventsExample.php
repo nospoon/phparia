@@ -19,9 +19,9 @@
 namespace phparia\Examples;
 
 use Clue\React\Ami\Protocol\Event;
-use Devristo\Phpws\Messaging\WebSocketMessage;
 use phparia\Client\Phparia;
 use phparia\Events\Message;
+use Ratchet\RFC6455\Messaging\Message as WebSocketMessage;
 use Symfony\Component\Yaml\Yaml;
 use Zend\Log;
 
@@ -64,7 +64,7 @@ class EventsExample
         $this->client = $client;
 
         // ARI Events
-        $client->getAriClient()->getWsClient()->on("message", function(WebSocketMessage $rawMessage) {
+        $client->getAriClient()->getWebSocket()->on("message", function(WebSocketMessage $rawMessage) {
             $message = new Message($rawMessage->getData());
             $this->log($message->getType());
         });

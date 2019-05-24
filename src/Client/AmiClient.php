@@ -22,7 +22,7 @@ use Clue\React\Ami\ActionSender;
 use Clue\React\Ami\Client;
 use Clue\React\Ami\Factory;
 use Clue\React\Ami\Protocol\Event;
-use Devristo\Phpws\Client\WebSocket;
+use Ratchet\Client\WebSocket;
 use React\EventLoop\LoopInterface;
 use Zend\Log\LoggerInterface;
 

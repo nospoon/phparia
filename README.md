@@ -1,8 +1,8 @@
 phparia - PHP ARI API
 ===
 
-Forked from wormling/phparia.
 Framework for creating ARI (Asterisk REST Interface) applications.  (https://wiki.asterisk.org/wiki/display/AST/Getting+Started+with+ARI)
+Forked from wormling/phparia and modified to work with updated dependencies and PHP 7.
 
 Features
 ---

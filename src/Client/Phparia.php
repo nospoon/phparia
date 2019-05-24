@@ -18,7 +18,6 @@
 namespace phparia\Client;
 
 
-use Devristo\Phpws\Client\WebSocket;
 use GuzzleHttp\Promise\FulfilledPromise;
 use phparia\Events\Event;
 use React\EventLoop;
@@ -83,11 +82,11 @@ class Phparia extends PhpariaApi
     public function connect($ariAddress, $amiAddress = null, $streamOptions = [], $clientOptions = [])
     {
         $this->ariClient->connect($ariAddress, $streamOptions, $clientOptions);
-        $this->wsClient = $this->ariClient->getWsClient();
+        $this->wsClient = $this->ariClient->getWebSocket();
         $this->stasisApplicationName = $this->ariClient->getStasisApplicationName();
 
         if ($amiAddress !== null) {
-            $this->amiClient = new AmiClient($this->ariClient->getWsClient(), $this->eventLoop, $this->logger);
+            $this->amiClient = new AmiClient($this->ariClient->getWebSocket(), $this->eventLoop, $this->logger);
             $this->amiClient
                 ->connect($amiAddress)
                 ->done();

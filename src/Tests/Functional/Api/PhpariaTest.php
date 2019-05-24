@@ -2,7 +2,6 @@
 
 namespace {
 
-    use Devristo\Phpws\Client\WebSocket;
     use phparia\Api\Asterisk;
     use phparia\Api\Recordings;
     use phparia\Api\Sounds;
@@ -18,6 +17,7 @@ namespace {
     use phparia\Resources\Mailbox;
     use phparia\Resources\Playback;
     use phparia\Tests\Functional\PhpariaTestCase;
+    use Ratchet\Client\WebSocket;
     use React\EventLoop\LoopInterface;
     use Zend\Log\LoggerInterface;
 

@@ -46,7 +46,7 @@ class Resource extends Response
     public function on($event, callable $listener)
     {
         $this->listeners[$event][] = $listener;
-        $this->client->getWsClient()->on($event, $listener);
+        $this->client->getWebSocket()->on($event, $listener);
     }
 
     /**
@@ -73,7 +73,7 @@ class Resource extends Response
         if (isset($this->listeners[$event])) {
             if (false !== $index = array_search($listener, $this->listeners[$event], true)) {
                 unset($this->listeners[$event][$index]);
-                $this->client->getWsClient()->removeListener($event, $listener);
+                $this->client->getWebSocket()->removeListener($event, $listener);
             }
         }
     }
@@ -86,11 +86,11 @@ class Resource extends Response
         if ($event !== null) {
             if (isset($this->listeners[$event])) {
                 unset($this->listeners[$event]);
-                $this->client->getWsClient()->removeAllListeners($event);
+                $this->client->getWebSocket()->removeAllListeners($event);
             }
         } else {
             foreach ($this->listeners as $event => $listeners) {
-                $this->client->getWsClient()->removeAllListeners($event);
+                $this->client->getWebSocket()->removeAllListeners($event);
             }
             $this->listeners = [];
         }
