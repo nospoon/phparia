@@ -1,85 +1,83 @@
 <?php
 
-namespace {
+use phparia\Resources\Bridge;
+use phparia\Tests\Functional\PhpariaTestCase;
 
-    use phparia\Resources\Bridge;
-    use phparia\Tests\Functional\PhpariaTestCase;
-
-    class ApplicationsTest extends PhpariaTestCase
+class ApplicationsTest extends PhpariaTestCase
+{
+    /**
+     * @test
+     */
+    public function canGetApplications()
     {
-        /**
-         * @test
-         */
-        public function canGetApplications()
-        {
-            $this->client->getAriClient()->onConnect(function () {
-                $applications = $this->client->applications()->getApplications();
-                foreach ($applications as $application) {
-                    $this->assertInstanceOf('phparia\Resources\Application', $application);
-                }
-                $this->client->stop();
-            });
-            $this->client->run();
-        }
-
-        /**
-         * @test
-         */
-        public function canGetApplication()
-        {
-            $this->client->getAriClient()->onConnect(function () {
-                $application = $this->client->applications()->getApplication($this->client->getStasisApplicationName());
+        $this->client->getAriClient()->onConnect(function () {
+            $applications = $this->client->applications()->getApplications();
+            foreach ($applications as $application) {
                 $this->assertInstanceOf('phparia\Resources\Application', $application);
-                $this->assertEquals($this->client->getStasisApplicationName(), $application->getName());
-                $this->client->stop();
-            });
-            $this->client->run();
-        }
+            }
+            $this->client->stop();
+        });
+        $this->client->run();
+    }
 
-        /**
-         * @test
-         * @expectedException \phparia\Exception\NotFoundException
-         */
-        public function canGetApplicationThrowNotFoundException()
-        {
-            $this->client->getAriClient()->onConnect(function () {
-                $this->client->applications()->getApplication('THIS_APPLICATION_NAME_WILL_NOT_EXIST');
-                $this->client->stop();
-            });
-            $this->client->run();
-        }
+    /**
+     * @test
+     */
+    public function canGetApplication()
+    {
+        $this->client->getAriClient()->onConnect(function () {
+            $application = $this->client->applications()->getApplication($this->client->getStasisApplicationName());
+            $this->assertInstanceOf('phparia\Resources\Application', $application);
+            $this->assertEquals($this->client->getStasisApplicationName(), $application->getName());
+            $this->client->stop();
+        });
+        $this->client->run();
+    }
 
-        /**
-         * @test
-         */
-        public function canSubscribe()
-        {
-            $this->client->getAriClient()->onConnect(function () {
-                $bridge = $this->client->bridges()->createBridge('BRIDGE_ID', null, 'BRIDGE_NAME');
-                $application = $this->client->applications()->subscribe($this->client->getStasisApplicationName(),
-                    "bridge:{$bridge->getId()}");
-                $this->assertEquals($this->client->getStasisApplicationName(), $application->getName());
-                $this->client->stop();
-            });
-            $this->client->run();
-        }
+    /**
+     * @test
+     * @expectedException \phparia\Exception\NotFoundException
+     */
+    public function canGetApplicationThrowNotFoundException()
+    {
+        $this->client->getAriClient()->onConnect(function () {
+            $this->client->applications()->getApplication('THIS_APPLICATION_NAME_WILL_NOT_EXIST');
+            $this->client->stop();
+        });
+        $this->client->run();
+    }
 
-        /**
-         * @test
-         * @expectedException \phparia\Exception\InvalidParameterException
-         */
-        public function canSubscribeThrowInvalidParameterException()
-        {
-            $this->client->getAriClient()->onConnect(function () {
-                try {
-                    $this->client->applications()->subscribe($this->client->getStasisApplicationName(), 'bad:format');
-                } catch (\phparia\Exception\InvalidParameterException $e) {
-                    $this->client->stop();
-                    throw($e);
-                }
-            });
-            $this->client->run();
-        }
+    /**
+     * @test
+     */
+    public function canSubscribe()
+    {
+        $this->client->getAriClient()->onConnect(function () {
+            $bridge = $this->client->bridges()->createBridge('BRIDGE_ID', null, 'BRIDGE_NAME');
+            $application = $this->client->applications()->subscribe($this->client->getStasisApplicationName(),
+                "bridge:{$bridge->getId()}");
+            $this->assertEquals($this->client->getStasisApplicationName(), $application->getName());
+            $this->client->stop();
+        });
+        $this->client->run();
+    }
+
+    /**
+     * @test
+     * @expectedException \phparia\Exception\InvalidParameterException
+     */
+    public function canSubscribeThrowInvalidParameterException()
+    {
+        $this->client->getAriClient()->onConnect(function () {
+            try {
+                $this->client->applications()->subscribe($this->client->getStasisApplicationName(), 'bad:format');
+            } catch (\phparia\Exception\InvalidParameterException $e) {
+                $this->client->stop();
+                throw($e);
+            }
+        });
+        $this->client->run();
+    }
 //
 //        /**
 //         * @test
@@ -200,5 +198,4 @@ namespace {
 //            });
 //            $this->client->run();
 //        }
-    }
 }

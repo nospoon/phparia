@@ -32,10 +32,10 @@ use phparia\Api\Recordings;
 use phparia\Api\Sounds;
 use phparia\Events\IdentifiableEventInterface;
 use phparia\Events\Message;
+use Psr\Log\LoggerInterface;
 use Ratchet\Client\WebSocket;
 use Ratchet\RFC6455\Messaging\Message as WebSocketMessage;
 use React\EventLoop\LoopInterface;
-use Zend\Log\LoggerInterface;
 
 /**
  * @author Brian Smith <wormling@gmail.com>
@@ -173,7 +173,7 @@ class AriClient
                 if (class_exists($eventType)) {
                     $event = new $eventType($this, $rawMessage->getContents());
                 } else {
-                    $this->logger->warn("Event: '$eventType' not implemented");
+                    $this->logger->warning("Event: '$eventType' not implemented");
 
                     // @todo Create a generic event for any that are not implemented
 

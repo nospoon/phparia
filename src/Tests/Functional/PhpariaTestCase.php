@@ -1,14 +1,15 @@
 <?php
 namespace phparia\Tests\Functional;
 
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use phparia\Client\Phparia;
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Yaml\Yaml;
-use Zend\Log\LoggerInterface;
-use Zend\Log;
 
 
-abstract class PhpariaTestCase extends PHPUnit_Framework_TestCase
+abstract class PhpariaTestCase extends TestCase
 {
     /**
      * @var Phparia
@@ -35,7 +36,7 @@ abstract class PhpariaTestCase extends PHPUnit_Framework_TestCase
      */
     protected $logger;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -46,18 +47,15 @@ abstract class PhpariaTestCase extends PHPUnit_Framework_TestCase
         $this->amiAddress = $value['tests']['ami_address'];
         $this->dialString = $value['tests']['dial_string'];
 
-        $this->logger = new Log\Logger();
-        $logWriter = new Log\Writer\Stream("php://output");
-        $this->logger->addWriter($logWriter);
-        $filter = new Log\Filter\SuppressFilter(true);
-        //$filter = new Log\Filter\Priority(\Zend\Log\Logger::NOTICE);
-        $logWriter->addFilter($filter);
+        $this->logger = new Logger('test');
+        $logHandler = new StreamHandler("php://output");
+        $this->logger->pushHandler($logHandler);
 
         $this->client = new Phparia($this->logger);
         $this->client->connect($this->ariAddress, $this->amiAddress);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $channels = $this->client->channels()->getChannels();
         foreach ($channels as $channel) {

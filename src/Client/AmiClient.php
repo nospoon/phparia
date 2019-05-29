@@ -22,9 +22,9 @@ use Clue\React\Ami\ActionSender;
 use Clue\React\Ami\Client;
 use Clue\React\Ami\Factory;
 use Clue\React\Ami\Protocol\Event;
+use Psr\Log\LoggerInterface;
 use Ratchet\Client\WebSocket;
 use React\EventLoop\LoopInterface;
-use Zend\Log\LoggerInterface;
 
 /**
  *  AMI Client to get events not supported in ARI
@@ -69,7 +69,7 @@ class AmiClient
      * Connect to AMI and start emitting events.
      *
      * @param string $address Example uaername:password@localhost:5038
-     * @return \React\Promise\Promise
+     * @return \React\Promise\PromiseInterface
      */
     public function connect($address)
     {
@@ -87,7 +87,7 @@ class AmiClient
                     $this->wsClient->emit($event->getName(), (array)$event);
                 });
             }, function (\Exception $e) {
-                $this->logger->err('Connection error: '.$e->getMessage());
+                $this->logger->error('Connection error: '.$e->getMessage());
             });
     }
 

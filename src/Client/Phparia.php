@@ -20,9 +20,9 @@ namespace phparia\Client;
 
 use GuzzleHttp\Promise\FulfilledPromise;
 use phparia\Events\Event;
+use Psr\Log\LoggerInterface;
 use React\EventLoop;
 use React\Promise\Deferred;
-use Zend\Log\LoggerInterface;
 
 class Phparia extends PhpariaApi
 {
