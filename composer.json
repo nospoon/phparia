@@ -56,7 +56,7 @@
     "clue/ami-react": "^0.4.0",
     "incenteev/composer-parameter-handler": ">=2.0",
     "guzzlehttp/guzzle": "^6.2",
-    "ratchet/pawl": "dev-master"
+    "ratchet/pawl": "^0.3.4"
   },
   "require-dev": {
     "phpunit/phpunit": ">=5.0",
